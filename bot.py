@@ -83,8 +83,14 @@ async def on_ready():
         update_timezones.start()
 
 
-@tasks.loop(minutes=30)
+@tasks.loop(minutes=1)
 async def update_timezones():
+    now = datetime.now(ZoneInfo("UTC"))
+
+    # Only run at :00 or :30
+    if now.minute not in (0, 30):
+        return
+
     data = load_data()
 
     channel = client.get_channel(CHANNEL_ID)
@@ -103,9 +109,9 @@ async def update_timezones():
         except discord.NotFound:
             print("Old message not found. Sending a new one.")
         except discord.Forbidden:
-            print("Bot does not have permission to edit/fetch the message.")
+            print("Bot does not have permission.")
         except discord.HTTPException as e:
-            print(f"Discord error while editing message: {e}")
+            print(f"Discord error: {e}")
 
     new_message = await channel.send(content)
     data["message_id"] = new_message.id
