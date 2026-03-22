@@ -26,6 +26,19 @@ def save_data(data):
         json.dump(data, f)
 
 
+def get_status(local_time):
+    hour = local_time.hour
+
+    if 0 <= hour < 6:
+        return "zzz"
+    elif 6 <= hour < 9:
+        return "up soon"
+    elif 9 <= hour < 22:
+        return "awake"
+    else:
+        return "late"
+
+
 def build_timezone_text():
     now_utc = datetime.now(ZoneInfo("UTC"))
 
@@ -51,10 +64,13 @@ def build_timezone_text():
         local_time = now_utc.astimezone(ZoneInfo(entry["tz"]))
         time_str = local_time.strftime("%I:%M %p").lstrip("0")
         day_str = local_time.strftime("%a")
+        status = get_status(local_time)
 
         title = f'[{entry["tag"]}] {entry["label"]}'
         time_line = f'{time_str} ({day_str})'
-        cells.append((title, time_line))
+        status_line = f'[{status}]'
+
+        cells.append((title, time_line, status_line))
 
     col_width = 24
     lines = ["Current Times", ""]
@@ -64,13 +80,16 @@ def build_timezone_text():
 
         title_line = ""
         time_line = ""
+        status_line = ""
 
-        for title, time_text in row:
+        for title, time_text, status_text in row:
             title_line += f"{title:<{col_width}}"
             time_line += f"{time_text:<{col_width}}"
+            status_line += f"{status_text:<{col_width}}"
 
         lines.append(title_line.rstrip())
         lines.append(time_line.rstrip())
+        lines.append(status_line.rstrip())
         lines.append("")
 
     return "```\n" + "\n".join(lines) + "\n```"
