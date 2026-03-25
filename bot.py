@@ -30,32 +30,32 @@ def get_status(local_time):
     hour = local_time.hour
 
     if 0 <= hour < 6:
-        return "zzz"
+        return "🌙 Asleep"
     elif 6 <= hour < 9:
-        return "up soon"
+        return "🌅 Up soon"
     elif 9 <= hour < 22:
-        return "awake"
+        return "🟢 Awake"
     else:
-        return "late"
+        return "🌃 Late"
 
 
-def build_timezone_text():
+def build_timezone_embed():
     now_utc = datetime.now(ZoneInfo("UTC"))
 
     timezones = [
-        {"tag": "US", "label": "Eastern US", "tz": "America/New_York"},
-        {"tag": "AU", "label": "Queensland", "tz": "Australia/Brisbane"},
-        {"tag": "US", "label": "Texas", "tz": "America/Chicago"},
-        {"tag": "PH", "label": "Philippines", "tz": "Asia/Manila"},
-        {"tag": "MX", "label": "Mexico", "tz": "America/Mexico_City"},
-        {"tag": "AT", "label": "Austria", "tz": "Europe/Vienna"},
-        {"tag": "UK", "label": "UK", "tz": "Europe/London"},
-        {"tag": "IE", "label": "Ireland", "tz": "Europe/Dublin"},
-        {"tag": "AU", "label": "S. Australia", "tz": "Australia/Adelaide"},
-        {"tag": "US", "label": "Southern US", "tz": "America/Chicago"},
-        {"tag": "DE", "label": "Germany", "tz": "Europe/Berlin"},
-        {"tag": "US", "label": "New York", "tz": "America/New_York"},
-        {"tag": "US", "label": "Pennsylvania", "tz": "America/New_York"},
+        {"emoji": "🇺🇸", "label": "Eastern US", "tz": "America/New_York"},
+        {"emoji": "🇦🇺", "label": "Queensland", "tz": "Australia/Brisbane"},
+        {"emoji": "🇺🇸", "label": "Texas", "tz": "America/Chicago"},
+        {"emoji": "🇵🇭", "label": "Philippines", "tz": "Asia/Manila"},
+        {"emoji": "🇲🇽", "label": "Mexico", "tz": "America/Mexico_City"},
+        {"emoji": "🇦🇹", "label": "Austria", "tz": "Europe/Vienna"},
+        {"emoji": "🇬🇧", "label": "UK", "tz": "Europe/London"},
+        {"emoji": "🇮🇪", "label": "Ireland", "tz": "Europe/Dublin"},
+        {"emoji": "🇦🇺", "label": "S. Australia", "tz": "Australia/Adelaide"},
+        {"emoji": "🇺🇸", "label": "Southern US", "tz": "America/Chicago"},
+        {"emoji": "🇩🇪", "label": "Germany", "tz": "Europe/Berlin"},
+        {"emoji": "🇺🇸", "label": "New York", "tz": "America/New_York"},
+        {"emoji": "🇺🇸", "label": "Pennsylvania", "tz": "America/New_York"},
     ]
 
     entries = []
@@ -69,35 +69,32 @@ def build_timezone_text():
         entries.append({
             "sort_hour": local_time.hour,
             "sort_minute": local_time.minute,
-            "title": f'[{entry["tag"]}] {entry["label"]}',
-            "time_line": f'{time_str} ({day_str})',
-            "status_line": f'[{status}]'
+            "name": f'{entry["emoji"]} {entry["label"]}',
+            "value": f'**{time_str}** ({day_str})\n{status}'
         })
 
-    # Sort by local time
-    entries.sort(key=lambda x: (x["sort_hour"], x["sort_minute"], x["title"]))
+    entries.sort(key=lambda x: (x["sort_hour"], x["sort_minute"], x["name"]))
 
-    col_width = 24
-    lines = ["Current Times", ""]
+    embed = discord.Embed(
+        title="🌍 Current Times",
+        description="Updated automatically every 30 minutes",
+    )
 
-    for i in range(0, len(entries), 3):
-        row = entries[i:i+3]
+    for item in entries:
+        embed.add_field(
+            name=item["name"],
+            value=item["value"],
+            inline=True
+        )
 
-        title_line = ""
-        time_line = ""
-        status_line = ""
+    # pad final row so embed layout stays neat
+    remainder = len(entries) % 3
+    if remainder != 0:
+        for _ in range(3 - remainder):
+            embed.add_field(name="\u200b", value="\u200b", inline=True)
 
-        for item in row:
-            title_line += f'{item["title"]:<{col_width}}'
-            time_line += f'{item["time_line"]:<{col_width}}'
-            status_line += f'{item["status_line"]:<{col_width}}'
-
-        lines.append(title_line.rstrip())
-        lines.append(time_line.rstrip())
-        lines.append(status_line.rstrip())
-        lines.append("")
-
-    return "```\n" + "\n".join(lines) + "\n```"
+    embed.set_footer(text=f"Last updated: {now_utc.strftime('%d %b %Y, %H:%M UTC')}")
+    return embed
 
 
 @client.event
@@ -121,13 +118,13 @@ async def update_timezones():
     if channel is None:
         channel = await client.fetch_channel(CHANNEL_ID)
 
-    content = build_timezone_text()
+    embed = build_timezone_embed()
     message_id = data.get("message_id")
 
     if message_id:
         try:
             message = await channel.fetch_message(message_id)
-            await message.edit(content=content)
+            await message.edit(content=None, embed=embed)
             print("Updated existing timezone message.")
             return
         except discord.NotFound:
@@ -137,7 +134,7 @@ async def update_timezones():
         except discord.HTTPException as e:
             print(f"Discord error: {e}")
 
-    new_message = await channel.send(content)
+    new_message = await channel.send(embed=embed)
     data["message_id"] = new_message.id
     save_data(data)
     print("Sent new timezone message.")
