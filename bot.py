@@ -58,7 +58,7 @@ def build_timezone_text():
         {"tag": "US", "label": "Pennsylvania", "tz": "America/New_York"},
     ]
 
-    cells = []
+    entries = []
 
     for entry in timezones:
         local_time = now_utc.astimezone(ZoneInfo(entry["tz"]))
@@ -66,26 +66,31 @@ def build_timezone_text():
         day_str = local_time.strftime("%a")
         status = get_status(local_time)
 
-        title = f'[{entry["tag"]}] {entry["label"]}'
-        time_line = f'{time_str} ({day_str})'
-        status_line = f'[{status}]'
+        entries.append({
+            "sort_hour": local_time.hour,
+            "sort_minute": local_time.minute,
+            "title": f'[{entry["tag"]}] {entry["label"]}',
+            "time_line": f'{time_str} ({day_str})',
+            "status_line": f'[{status}]'
+        })
 
-        cells.append((title, time_line, status_line))
+    # Sort by local time
+    entries.sort(key=lambda x: (x["sort_hour"], x["sort_minute"], x["title"]))
 
     col_width = 24
     lines = ["Current Times", ""]
 
-    for i in range(0, len(cells), 3):
-        row = cells[i:i+3]
+    for i in range(0, len(entries), 3):
+        row = entries[i:i+3]
 
         title_line = ""
         time_line = ""
         status_line = ""
 
-        for title, time_text, status_text in row:
-            title_line += f"{title:<{col_width}}"
-            time_line += f"{time_text:<{col_width}}"
-            status_line += f"{status_text:<{col_width}}"
+        for item in row:
+            title_line += f'{item["title"]:<{col_width}}'
+            time_line += f'{item["time_line"]:<{col_width}}'
+            status_line += f'{item["status_line"]:<{col_width}}'
 
         lines.append(title_line.rstrip())
         lines.append(time_line.rstrip())
