@@ -69,8 +69,8 @@ def build_timezone_embed():
         entries.append({
             "sort_hour": local_time.hour,
             "sort_minute": local_time.minute,
-            "name": f'{entry["emoji"]} {entry["label"]}\n────────',
-            "value": f'🕒 **{time_str}** ({day_str})\n{status}\n\u200b'
+            "name": f'{entry["emoji"]} {entry["label"]}',
+            "value": f'🕒 **{time_str}** ({day_str})\n{status}\n────────\n\u200b'
         })
 
     entries.sort(key=lambda x: (x["sort_hour"], x["sort_minute"], x["name"]))
