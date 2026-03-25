@@ -34,7 +34,7 @@ def get_status(local_time):
     elif 6 <= hour < 9:
         return "🌅 Up soon"
     elif 9 <= hour < 22:
-        return "🟢 Awake"
+        return "☀️ Awake"
     else:
         return "🌃 Late"
 
@@ -69,16 +69,17 @@ def build_timezone_embed():
         entries.append({
             "sort_hour": local_time.hour,
             "sort_minute": local_time.minute,
-            "name": f'{entry["emoji"]} {entry["label"]}',
-            "value": f'**{time_str}** ({day_str})\n{status}'
+            "name": f'{entry["emoji"]} {entry["label"]}\n────────',
+            "value": f'🕒 **{time_str}** ({day_str})\n{status}\n\u200b'
         })
 
     entries.sort(key=lambda x: (x["sort_hour"], x["sort_minute"], x["name"]))
 
     embed = discord.Embed(
-        title="🌍 Current Times",
-        description="Updated automatically every 30 minutes",
-    )
+    title="🌍 Current Times",
+    description="Updated automatically every 30 minutes",
+    color=0x5865F2  # Discord blurple
+)
 
     for item in entries:
         embed.add_field(
