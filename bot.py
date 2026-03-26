@@ -53,7 +53,7 @@ def build_timezone_embed():
         {"emoji": "🇮🇪", "label": "Ireland", "tz": "Europe/Dublin"},
         {"emoji": "🇦🇺", "label": "S. Australia", "tz": "Australia/Adelaide"},
         {"emoji": "🇺🇸", "label": "Southern US", "tz": "America/Chicago"},
-        {"emoji": "🇩🇪", "label": "Germany", "tz": "Europe/Berlin"},
+        {"emoji": "🇪🇸", "label": "Spain", "tz": "Europe/Madrid"},
         {"emoji": "🇺🇸", "label": "New York", "tz": "America/New_York"},
         {"emoji": "🇺🇸", "label": "Pennsylvania", "tz": "America/New_York"},
     ]
