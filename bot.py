@@ -66,14 +66,13 @@ def build_timezone_embed():
         status = get_status(local_time)
 
         entries.append({
-    "datetime": local_time,
-    "sort_hour": local_time.hour,
-    "sort_minute": local_time.minute,
-            "name": f'{entry["emoji"]} {entry["name"]}\n[{entry["label"]}]',
-            "value": f'🕒 **{time_str}** ({day_str})\n{status}\n────────\n\u200b'
-        })
+    "sort_date": local_time.date(),
+    "sort_time": local_time.time(),
+    "name": f'{entry["emoji"]} {entry["name"]}\n[{entry["label"]}]',
+    "value": f'🕒 **{time_str}** ({day_str})\n{status}\n────────\n\u200b'
+})
 
-    entries.sort(key=lambda x: x["datetime"])
+    entries.sort(key=lambda x: (x["sort_date"], x["sort_time"], x["name"]))
 
     embed = discord.Embed(
     title="🌍 Current Times",
