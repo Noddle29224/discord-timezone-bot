@@ -47,14 +47,15 @@ def build_timezone_embed():
     {"name": "💚 ℂ𝕙𝕣𝕚𝕤 [26]", "emoji": "🇺🇸", "label": "California, USA", "tz": "America/Los_Angeles"},
     {"name": "💛 𝕃𝕦𝕜𝕖 [23]", "emoji": "🇦🇺", "label": "South Australia", "tz": "Australia/Adelaide"},
     {"name": "❤️ ℕ𝕚𝕔𝕜 [27]", "emoji": "🇺🇸", "label": "North Carolina, USA", "tz": "America/New_York"},
-    {"name": "💜 𝕄𝕒𝕥𝕥 [43]", "emoji": "🇺🇸", "label": "Virginia, USA", "tz": "America/New_York"},
+    {"name": "💖 𝕄𝕒𝕥𝕥 [43]", "emoji": "🇺🇸", "label": "Virginia, USA", "tz": "America/New_York"},
     {"name": "🖤 ℕ𝕚𝕟𝕔𝕙𝕚 [32]", "emoji": "🇺🇸", "label": "California, USA", "tz": "America/Los_Angeles"},
     {"name": "🤍 𝕄𝕦𝕜𝕖𝕤𝕙 [24]", "emoji": "🇺🇸", "label": "Texas, USA", "tz": "America/Chicago"},
-    {"name": "🤎 𝕊𝕥𝕖𝕧𝕖𝕟 [25]", "emoji": "🇺🇸", "label": "Idaho, USA", "tz": "America/Denver"},
+    {"name": "🩵 𝕊𝕥𝕖𝕧𝕖𝕟 [25]", "emoji": "🇺🇸", "label": "Idaho, USA", "tz": "America/Denver"},
     {"name": "🧡 ℝ𝕖𝕘 [32]", "emoji": "🇺🇸", "label": "Massachusetts, USA", "tz": "America/New_York"},
-    {"name": "🩵 𝔻𝕠𝕧𝕖 [30]", "emoji": "🇮🇩", "label": "Bandung, Indonesia", "tz": "Asia/Jakarta"},
+    {"name": "💜 𝔻𝕠𝕧𝕖 [30]", "emoji": "🇮🇩", "label": "Bandung, Indonesia", "tz": "Asia/Jakarta"},
     {"name": "🩶 𝔸𝕕𝕖𝕟 [23]", "emoji": "🇬🇧", "label": "Edinburgh, Scotland", "tz": "Europe/London"},
     {"name": "🩷 𝕍𝕚 [26]", "emoji": "🇪🇸", "label": "Spain", "tz": "Europe/Madrid"},
+    {"name": "🤎 𝕋𝕒𝕪𝕝𝕠𝕣 [30]", "emoji": "🇺🇸", "label": "Kentucky, USA", "tz": "America/New_York"},
 ]
 
     entries = []
