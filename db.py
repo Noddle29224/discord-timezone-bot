@@ -36,3 +36,100 @@ def setup_database():
         conn.commit()
 
     print("Database setup complete.")
+
+def save_server_settings(guild_id, channel_id, message_id=None):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO server_settings (guild_id, channel_id, message_id
+                VALUES (%s, %s, %s)
+                ON CONFLICT (guild_id)
+                DO UPDATE SET
+                    channel_id = EXCLUDED.channel_id,
+                    message_id = EXCLUDED.message_id
+            """, (guild_id, channel_id, message_id))
+
+        conn.commit()
+
+def get_server_settings(guild_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT channel_id, message_id
+                FROM server_settings
+                WHERE guild_id = %s
+            """, (guild_id,))
+
+            result = cur.fetchone()
+
+            if result:
+                return {
+                    "channel_id": result[0],
+                    "message_id": result[1]
+                }
+            return None
+
+def add_timezone_member(
+    guild_id,
+    user_id,
+    display_name,
+    age,
+    flag,
+    location,
+    timezone
+):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO timezone_members (
+                    guild_id,
+                    user_id,
+                    display_name,
+                    age,
+                    flag,
+                    location,
+                    timezone
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (
+                guild_id,
+                user_id,
+                display_name,
+                age,
+                flag,
+                location,
+                timezone
+            ))
+
+        conn.commit()
+
+def remove_timezone_member(guild_id, user_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                DELETE FROM timezone_members
+                WHERE guild_id = %s
+                AND user_id = %s
+            """, (guild_id, user_id))
+
+        conn.commit()
+
+def get_timezone_members(guild_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT
+                    user_id,
+                    display_name,
+                    age,
+                    flag,
+                    location,
+                    timezone
+                FROM timezone_members
+                WHERE guild_id = %s
+                ORDER BY location
+            """, (guild_id,))
+
+            rows = cur.fetchall()
+
+            return rows

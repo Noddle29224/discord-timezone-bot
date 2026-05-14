@@ -2,7 +2,15 @@ import json
 import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from db import setup_database
+from discord import app_commands
+from db import (
+    setup_database,
+    save_server_settings,
+    get_server_settings,
+    add_timezone_member,
+    remove_timezone_member,
+    get_timezone_members
+)
 
 import discord
 from discord.ext import tasks
@@ -13,7 +21,7 @@ DATA_FILE = "bot_data.json"
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
-
+tree = app_commands.CommandTree(client)
 
 def load_data():
     if os.path.exists(DATA_FILE):
@@ -101,6 +109,8 @@ def build_timezone_embed():
 
 @client.event
 async def on_ready():
+    await tree.sync()
+    print("Slash commands synced.")
     print(f"Logged in as {client.user}")
     if not update_timezones.is_running():
         update_timezones.start()
@@ -149,6 +159,20 @@ async def before_update_timezones():
 if not TOKEN:
     raise RuntimeError("DISCORD_BOT_TOKEN is not set.")
 
+
+# Slash Commands
+@tree.command(name="timezone_setup", description="Set the timezone channel")
+@app_commands.checks.has_permissions(administrator=True)
+async def timezone_setup(interaction: discord.Interaction, channel: discord.TextChannel):
+
+    save_server_settings(
+        interaction.guild.id,
+        channel.id
+    )
+    await interaction.response.send_message(
+        f"Timezone channel set to {channel.mention}",
+        ephemeral=True
+    )
 
 setup_database()
 client.run(TOKEN)
