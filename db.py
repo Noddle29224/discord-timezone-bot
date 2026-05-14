@@ -41,7 +41,7 @@ def save_server_settings(guild_id, channel_id, message_id=None):
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO server_settings (guild_id, channel_id, message_id
+                INSERT INTO server_settings (guild_id, channel_id, message_id)
                 VALUES (%s, %s, %s)
                 ON CONFLICT (guild_id)
                 DO UPDATE SET
