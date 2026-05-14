@@ -165,12 +165,12 @@ if not TOKEN:
 @app_commands.checks.has_permissions(administrator=True)
 async def timezone_setup(interaction: discord.Interaction, channel: discord.TextChannel):
     await interaction.response.defer(ephemeral=True)
-    
+
     save_server_settings(
         interaction.guild.id,
         channel.id
     )
-    await interaction.response.send_message(
+    await interaction.followup.send(
         f"Timezone channel set to {channel.mention}",
         ephemeral=True
     )
