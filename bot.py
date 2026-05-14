@@ -164,15 +164,14 @@ if not TOKEN:
 @tree.command(name="timezone_setup", description="Set the timezone channel")
 @app_commands.checks.has_permissions(administrator=True)
 async def timezone_setup(interaction: discord.Interaction, channel: discord.TextChannel):
-    await interaction.response.defer(ephemeral=True)
+    await interaction.response.send_message(
+        f"Timezone channel set to {channel.mention}",
+        ephemeral=True
+    )
 
     save_server_settings(
         interaction.guild.id,
         channel.id
-    )
-    await interaction.followup.send(
-        f"Timezone channel set to {channel.mention}",
-        ephemeral=True
     )
 
 setup_database()
