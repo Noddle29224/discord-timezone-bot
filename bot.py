@@ -2,6 +2,7 @@ import json
 import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from db import setup_database
 
 import discord
 from discord.ext import tasks
@@ -148,4 +149,6 @@ async def before_update_timezones():
 if not TOKEN:
     raise RuntimeError("DISCORD_BOT_TOKEN is not set.")
 
+
+setup_database()
 client.run(TOKEN)
