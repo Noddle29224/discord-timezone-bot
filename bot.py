@@ -240,5 +240,20 @@ async def timezone_list(interaction: discord.Interaction):
         ephemeral=True
     )
 
+@tree.command(name="timezone_refresh", description="Refresh the timezone embed")
+@app_commands.checks.has_permissions(administrator=True)
+async def timezone_refresh(interaction: discord.Interaction):
+    await interaction.response.send_message(
+        "Refreshing timezone board...",
+        ephemeral=True
+    )
+
+    await update_timezones()
+
+    await interaction.followup.send(
+        "Timezone board refreshed.",
+        ephemeral=True
+    )
+
 setup_database()
 client.run(TOKEN)
