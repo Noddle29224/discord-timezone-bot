@@ -174,5 +174,73 @@ async def timezone_setup(interaction: discord.Interaction, channel: discord.Text
         channel.id
     )
 
+@tree.command(name="timezone_add", description="Add a person to a timezone list")
+@app_commands.checks.has_permissions(administrator=True)
+async def timezone_add(
+    interaction: discord.Interaction,
+    user: discord.Member,
+    display_name: str,
+    age: int,
+    flag: str,
+    location: str,
+    timezone: str
+):
+    await interaction.response.send_message(
+        f"Added {display_name} to the timezone list.",
+        ephemeral=True
+    )
+
+    add_timezone_member(
+        interaction.guild.id,
+        user.id,
+        display_name,
+        age,
+        flag,
+        location,
+        timezone
+    )
+
+@tree.command(name="timezone_remove", description="Remove a person from the timezone list")
+@app_commands.checks.has_permissions(administrator=True)
+async def timezone_remove(
+    interaction: discord.Interaction,
+    user: discord.Member
+):
+    await interaction.response.send_message(
+        f"Removed {user.mention} from the timezone list.",
+        ephemeral=True
+    )
+
+    remove_timezone_member(
+        interaction.guild.id,
+        user.id
+    )
+
+@tree.command(name="timezone_list", description="Show timezone members")
+async def timezone_list(interaction: discord.Interaction):
+
+    members = get_timezone_members(interaction.guild.id)
+
+    if not members:
+        await interaction.response.send_message(
+            "No timezone members saved.",
+            ephemeral=True
+        )
+        return
+    
+    lines = []
+
+    for member in members:
+        lines.append(
+            f"{member[3]} {member[1]} - {member[4]} ({member[5]})"
+        )
+
+    message = "\n".join(lines)
+
+    await interaction.response.send_message(
+        message,
+        ephemeral=True
+    )
+    
 setup_database()
 client.run(TOKEN)
