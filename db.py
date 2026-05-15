@@ -30,6 +30,11 @@ def setup_database():
                     flag TEXT,
                     location TEXT,
                     timezone TEXT
+                    details_locked BOOLEAN DEFAULT FALSE,
+                    availability_locked BOOLEAN DEFAULT FALSE,
+                    manual_override_enabled BOOLEAN DEFAULT FALSE,
+                    manual_activity TEXT,
+                    manual_availability TEXT
                 )
             """)
 
@@ -72,11 +77,11 @@ def get_server_settings(guild_id):
 def add_timezone_member(
     guild_id,
     user_id,
-    display_name,
-    age,
-    flag,
-    location,
-    timezone
+    display_name=None,
+    age=None,
+    flag=None,
+    location=None,
+    timezone=None
 ):
     with get_connection() as conn:
         with conn.cursor() as cur:

@@ -172,30 +172,72 @@ async def timezone_setup(interaction: discord.Interaction, channel: discord.Text
         channel.id
     )
 
-@tree.command(name="timezone_add", description="Add a person to a timezone list")
+class TimezoneAddModal(discord.ui.Modal, title="Add Timezone Member"):
+    display_name = discord.ui.TextInput(
+        label="Display name",
+        placeholder="💙 Charlie",
+        required=True
+    )
+
+    age = discord.ui.TextInput(
+        label="Age",
+        placeholder="23",
+        required=True
+    )
+
+    flag = discord.ui.TextInput(
+        label="Flag",
+        placeholder="🇦🇺",
+        required=True
+    )
+
+    location = discord.ui.TextInput(
+        label="Location",
+        placeholder="Queensland, Australia",
+        required=True
+    )
+
+    timezone = discord.ui.TextInput(
+        label="Timezone",
+        placeholder="Australia/Brisbane",
+        required=True
+    )
+
+    def __init__(self, user):
+        super().__init__()
+        self.user = user
+
+    async def on_submit(self, interaction: discord.Interaction):
+        add_timezone_member(
+            interaction.guild.id,
+            self.user.id,
+            str(self.display_name),
+            int(str(self.age)),
+            str(self.flag),
+            str(self.location),
+            str(self.timezone)
+        )
+
+        await interaction.response.send_message(
+            f"Added {self.display_name} to the timezone list.",
+            ephemeral=True
+        )
+
+@tree.command(name="timezone_add", description="Approve a member for the timezone board")
 @app_commands.checks.has_permissions(administrator=True)
 async def timezone_add(
     interaction: discord.Interaction,
-    user: discord.Member,
-    display_name: str,
-    age: int,
-    flag: str,
-    location: str,
-    timezone: str
+    user: discord.member
 ):
-    await interaction.response.send_message(
-        f"Added {display_name} to the timezone list.",
-        ephemeral=True
+    await interaction.response.send_modal(
+        f"{user.mention} has been added to the Timezone board setup list.\n\n"
+        f"Use '/timezone_my_details' to set up your progile.\n\n\n"
+        f"Want to join the board? Conact an admin to be added! 😊",
     )
 
     add_timezone_member(
         interaction.guild.id,
-        user.id,
-        display_name,
-        age,
-        flag,
-        location,
-        timezone
+        user.id
     )
 
 @tree.command(name="timezone_remove", description="Remove a person from the timezone list")
