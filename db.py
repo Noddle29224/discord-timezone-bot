@@ -29,7 +29,7 @@ def setup_database():
                     age INTEGER,
                     flag TEXT,
                     location TEXT,
-                    timezone TEXT
+                    timezone TEXT,
                     details_locked BOOLEAN DEFAULT FALSE,
                     availability_locked BOOLEAN DEFAULT FALSE,
                     manual_override_enabled BOOLEAN DEFAULT FALSE,
