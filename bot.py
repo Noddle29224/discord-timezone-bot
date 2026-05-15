@@ -227,7 +227,7 @@ class TimezoneAddModal(discord.ui.Modal, title="Add Timezone Member"):
 @app_commands.checks.has_permissions(administrator=True)
 async def timezone_add(
     interaction: discord.Interaction,
-    user: discord.member
+    user: discord.Member
 ):
     await interaction.response.send_modal(
         f"{user.mention} has been added to the Timezone board setup list.\n\n"
