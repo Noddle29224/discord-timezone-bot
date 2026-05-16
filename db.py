@@ -193,7 +193,8 @@ def get_timezone_member(guild_id, user_id):
                     flag,
                     location,
                     timezone,
-                    details_locked
+                    details_locked,
+                    availability_locked
                 FROM timezone_members
                 WHERE guild_id = %s
                 AND user_id = %s
@@ -280,6 +281,26 @@ def set_member_override(guild_id, user_id, activity, availability):
                     manual_activity = %s,
                     manual_availability = %s,
                     manual_override_enabled = TRUE
+                WHERE guild_id = %s
+                AND user_id = %s
+            """, (
+                activity,
+                availability,
+                guild_id,
+                user_id
+            ))
+
+        conn.commit()
+
+def set_member_auto_status(guild_id, user_id, activity, availability):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE timezone_members
+                SET
+                    auto_activity = %s,
+                    auto_availability = %s,
+                    availability_locked = TRUE
                 WHERE guild_id = %s
                 AND user_id = %s
             """, (

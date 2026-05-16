@@ -14,7 +14,8 @@ from db import (
     update_member_details,
     update_member_timezone,
     reset_member_details,
-    set_member_override
+    set_member_override,
+    set_member_auto_status
 )
 
 import discord
@@ -118,7 +119,7 @@ def build_timezone_embed(guild_id):
     "sort_date": local_time.date(),
     "sort_time": local_time.time(),
     "name": f'{entry["emoji"]}   {entry["name"]}\n[{entry["label"]}]',
-    "value": f'🕒 **{time_str}** ({day_str})\n{status}\n {format_activity(entry["activity"])}    •    {format_availability(entry["availability"])}\n────────\n\u200b'
+    "value": f'🕒 **{time_str}** ({day_str})\n{status}\n {format_activity(entry["activity"])}\n{format_availability(entry["availability"])}\n────────\n\u200b'
 })
 
     entries.sort(key=lambda x: (x["sort_date"], x["sort_time"], x["name"]))
@@ -459,6 +460,41 @@ class OverrideView(discord.ui.View):
 
         await update_timezones()
 
+class AutoStatusView(discord.ui.View):
+
+    def __init__(self):
+        super().__init__(timeout=300)
+
+        self.selected_activity = "Around"
+        self.selected_availability = "Available"
+
+        self.add_item(ActivitySelect())
+        self.add_item(AvailabilitySelect())
+
+    @discord.ui.button(
+        label="Save Defaults",
+        style=discord.ButtonStyle.green,
+        row=2
+    )
+    async def save_defaults(
+        self,
+        interaction: discord.Interaction,
+        button: discord.ui.Button
+    ):
+        set_member_auto_status(
+            interaction.guild.id,
+            interaction.user.id,
+            self.selected_activity,
+            self.selected_availability
+        )
+
+        await interaction.response.send_message(
+            f"Default availability set to: {self.selected_activity} • {self.selected_availability}",
+            ephemeral=True
+        )
+
+        await update_timezones()
+
 @tree.command(name="timezone_add", description="Approve a member for the timezone board")
 @app_commands.checks.has_permissions(administrator=True)
 async def timezone_add(
@@ -616,6 +652,34 @@ async def timezone_my_override(interaction: discord.Interaction):
         ephemeral=True
     )
 
+@tree.command(name="timezone_my_avail", description="Set your default activity and availability")
+async def timezone_my_avail(interaction: discord.Interaction):
+
+    member = get_timezone_member(
+        interaction.guild.id,
+        interaction.user.id
+    )
+
+    if not member:
+        await interaction.response.send_message(
+            "You are not on this timezone board.\n"
+            "*Want to join the board? Contact an admin to be added!   😊*",
+            ephemeral=True
+        )
+        return
+    
+    if member[8]:
+        await interaction.response.send_message(
+            "Your default availability is already locked. Contact an admin if you need changes.",
+            ephemeral=True
+        )
+        return
+    
+    await interaction.response.send_message(
+        "Choose your default activity and availability:",
+        view=AutoStatusView(),
+        ephemeral=True
+    )
 
 @tree.command(name="timezone_remove", description="Remove a person from the timezone list")
 @app_commands.checks.has_permissions(administrator=True)
