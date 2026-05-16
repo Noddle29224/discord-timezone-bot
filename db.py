@@ -337,7 +337,7 @@ def set_sleep_schedule(guild_id, user_id, start_hour, end_hour):
                 SET
                     sleep_start = %s,
                     sleep_end = %s
-                WHERE guild_is = %s
+                WHERE guild_id = %s
                 AND user_id = %s
             """, (
                 start_hour,
