@@ -76,6 +76,11 @@ def setup_database():
                 ADD COLUMN IF NOT EXISTS manual_override_enabled BOOLEAN DEFAULT FALSE
             """)
 
+            cur.execute("""
+                ALTER TABLE timezone_members
+                ADD COLUMN IF NOT EXISTS availability_locked BOOLEAN DEFAULT FALSE
+            """)
+
         conn.commit()
 
     print("Database setup complete.")
