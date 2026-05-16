@@ -230,9 +230,9 @@ async def timezone_add(
     user: discord.Member
 ):
     await interaction.response.send_message(
-        f"{user.mention} has been added to the Timezone board setup list.\n\n"
-        f"Use '/timezone_my_details' to set up your progile.\n\n\n"
-        f"Want to join the board? Conact an admin to be added! 😊",
+        f"{user.mention} has been added to the Timezone board setup list.\n"
+        f"Use '/timezone_my_details' to set up your profile.\n\n"
+        f"*Want to join the board? Conact an admin to be added! 😊*"
     )
 
     add_timezone_member(
