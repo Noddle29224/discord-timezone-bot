@@ -800,6 +800,18 @@ async def timezone_my_sleep(
     sleep_end: int
 ):
     
+    member = get_timezone_member(
+        interaction.guild.id,
+        interaction.user.id
+    )
+
+    if member and member[7]:
+        await interaction.response.send_message(
+            "Your availability/sleep schedule is already locked. Contact an admin if you need changes.",
+            ephemeral=True
+        )
+        return
+    
     if sleep_start < 0 or sleep_start > 23:
         await interaction.response.send_message(
             "Sleep start hour must be between 0 and 23.",
