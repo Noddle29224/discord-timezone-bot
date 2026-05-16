@@ -98,24 +98,6 @@ def build_timezone_embed(guild_id):
         sleep_start = row[11]
         sleep_end = row[12]
 
-        if sleep_start is not None and sleep_end is not None:
-
-            is_sleeping = False
-
-            if sleep_start > sleep_end:
-                is_sleeping = (
-                    local_time.hour >= sleep_start
-                    or local_time.hour < sleep_end
-                )
-            else:
-                is_sleeping = (
-                    sleep_start <= local_time.hour < sleep_end
-                )
-
-            if is_sleeping:
-                activity = "Sleeping"
-                availability = "Do Not Disturb"
-
         if manual_override_enabled:
             activity = manual_activity or activity
             availability = manual_availability or availability
@@ -143,6 +125,23 @@ def build_timezone_embed(guild_id):
     "name": f'{entry["emoji"]}   {entry["name"]}\n[{entry["label"]}]',
     "value": f'🕒 **{time_str}** ({day_str})\n{status}\n {format_activity(entry["activity"])}\n{format_availability(entry["availability"])}\n────────\n\u200b'
 })
+        if sleep_start is not None and sleep_end is not None:
+
+            is_sleeping = False
+
+            if sleep_start > sleep_end:
+                is_sleeping = (
+                    local_time.hour >= sleep_start
+                    or local_time.hour < sleep_end
+                )
+            else:
+                is_sleeping = (
+                    sleep_start <= local_time.hour < sleep_end
+                )
+
+            if is_sleeping:
+                activity = "Sleeping"
+                availability = "Do Not Disturb"
 
     entries.sort(key=lambda x: (x["sort_date"], x["sort_time"], x["name"]))
 
