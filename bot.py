@@ -64,11 +64,20 @@ def build_timezone_embed(guild_id):
         if not row[5]:
             continue
 
+        activity = row[6] or "Around"
+        availability = row[7] or "Available"
+
+        if row [10]:
+            activity = row[8] or activity
+            availability = row[7] or availability
+
         timezones.append({
             "name": row[1],
             "emoji": row[3],
             "label": row[4],
-            "tz": row[5]
+            "tz": row[5],
+            "activity": activity,
+            "availability": availability
         })
 
     entries = []
@@ -83,8 +92,8 @@ def build_timezone_embed(guild_id):
     "sort_date": local_time.date(),
     "sort_time": local_time.time(),
     "name": f'{entry["emoji"]}   {entry["name"]}\n[{entry["label"]}]',
-    "value": f'🕒 **{time_str}** ({day_str})\n{status}\n────────\n\u200b'
-})
+    "value": f'🕒 **{time_str}** ({day_str})\n{status}\n🟢 {entry['activity']} • {entry['availability']}\n────────\n\u200b'
+    })
 
     entries.sort(key=lambda x: (x["sort_date"], x["sort_time"], x["name"]))
 

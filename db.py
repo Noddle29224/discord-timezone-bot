@@ -33,6 +33,8 @@ def setup_database():
                     timezone_valid BOOLEAN DEFAULT FALSE,
                     details_locked BOOLEAN DEFAULT FALSE,
                     availability_locked BOOLEAN DEFAULT FALSE,
+                    auto_activity TEXT DEFAULT 'Around',
+                    auto_availability TEXT DEFAULT 'Available',
                     manual_override_enabled BOOLEAN DEFAULT FALSE,
                     manual_activity TEXT,
                     manual_availability TEXT
@@ -47,6 +49,16 @@ def setup_database():
             cur.execute("""
                 ALTER TABLE timezone_members
                 ADD COLUMN IF NOT EXISTS timezone_valid BOOLEAN DEFAULT FALSE
+            """)
+
+            cur.execute("""
+                ALTER TABLE timezone_members
+                ADD COLUMN IF NOT EXISTS auto_activity TEXT DEFAULT 'Around'
+            """)
+
+            cur.execute("""
+                ALTER TABLE timezone_members
+                ADD COLUMN IF NOT EXISTS auto_availability TEXT DEFAULT 'Available'
             """)
 
         conn.commit()
@@ -140,7 +152,12 @@ def get_timezone_members(guild_id):
                     age,
                     flag,
                     location,
-                    timezone
+                    timezone,
+                    auto_activity,
+                    auto_availability,
+                    manual_activity,
+                    manual_availability,
+                    manual_override_enabled
                 FROM timezone_members
                 WHERE guild_id = %s
                 ORDER BY location
