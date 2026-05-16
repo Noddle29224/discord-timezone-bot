@@ -117,12 +117,9 @@ def build_timezone_embed(guild_id):
         day_str = local_time.strftime("%a")
         status = get_status(local_time)
 
-        entries.append({
-    "sort_date": local_time.date(),
-    "sort_time": local_time.time(),
-    "name": f'{entry["emoji"]}   {entry["name"]}\n[{entry["label"]}]',
-    "value": f'🕒 **{time_str}** ({day_str})\n{status}\n {format_activity(activity)}\n{format_availability(availability)}\n────────\n\u200b'
-})
+        activity = entry["activity"]
+        availability = entry["availability"]
+
         if sleep_start is not None and sleep_end is not None:
 
             is_sleeping = False
@@ -140,6 +137,13 @@ def build_timezone_embed(guild_id):
             if is_sleeping:
                 activity = "Sleeping"
                 availability = "Do Not Disturb"
+
+        entries.append({
+    "sort_date": local_time.date(),
+    "sort_time": local_time.time(),
+    "name": f'{entry["emoji"]}   {entry["name"]}\n[{entry["label"]}]',
+    "value": f'🕒 **{time_str}** ({day_str})\n{status}\n {format_activity(activity)}\n{format_availability(availability)}\n────────\n\u200b'
+})
         
         if manual_override_enabled:
             activity = manual_activity or activity
