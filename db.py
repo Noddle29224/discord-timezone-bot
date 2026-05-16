@@ -35,6 +35,8 @@ def setup_database():
                     availability_locked BOOLEAN DEFAULT FALSE,
                     auto_activity TEXT DEFAULT 'Around',
                     auto_availability TEXT DEFAULT 'Available',
+                    sleep_start INTEGER,
+                    sleep_end INTEGER,
                     manual_override_enabled BOOLEAN DEFAULT FALSE,
                     manual_activity TEXT,
                     manual_availability TEXT
@@ -79,6 +81,16 @@ def setup_database():
             cur.execute("""
                 ALTER TABLE timezone_members
                 ADD COLUMN IF NOT EXISTS availability_locked BOOLEAN DEFAULT FALSE
+            """)
+
+            cur.execute("""
+                ALTER TABLE timezone_members
+                ADD COLUMN IF NOT EXISTS sleep_start INTEGER
+            """)
+
+            cur.execute("""
+                ALTER TABLE timezone_members
+                ADD COLUMN IF NOT EXISTS sleep_end INTEGER
             """)
 
         conn.commit()
@@ -311,6 +323,25 @@ def set_member_auto_status(guild_id, user_id, activity, availability):
             """, (
                 activity,
                 availability,
+                guild_id,
+                user_id
+            ))
+
+        conn.commit()
+
+def set_sleep_schedule(guild_id, user_id, start_hour, end_hour):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE timezone_members
+                SET
+                    sleep_start = %s,
+                    sleep_end = %s
+                WHERE guild_is = %s
+                AND user_id = %s
+            """, (
+                start_hour,
+                end_hour,
                 guild_id,
                 user_id
             ))

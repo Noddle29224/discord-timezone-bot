@@ -15,7 +15,8 @@ from db import (
     update_member_timezone,
     reset_member_details,
     set_member_override,
-    set_member_auto_status
+    set_member_auto_status,
+    set_sleep_schedule
 )
 
 import discord
@@ -759,6 +760,43 @@ async def timezone_help(interaction: discord.Interaction):
         "'Europe/London'\n"
         "'Asia/Manila'\n\n"
         "**Tip:** You can type a country name like 'Australia' instead of a flag emoji.",
+        ephemeral=True
+    )
+
+@tree.command(name="timezone_my_sleep", description="Set your normal sleep schedule")
+@app_commands.describe(
+    sleep_start="Hour you normally go to sleep (0-23)",
+    sleep_end="Hour you normally wake up (0-23)"
+)
+async def timezone_my_sleep(
+    interaction: discord.Interaction,
+    sleep_start: int,
+    sleep_end: int
+):
+    
+    if sleep_start < 0 or sleep_start > 23:
+        await interaction.response.send_message(
+            "Sleep start hour must be between 0 and 23.",
+            ephemeral=True
+        )
+        return
+    
+    if sleep_end < 0 or sleep_end > 23:
+        await interaction.response.send_message(
+            "Sleep end hour must be between 0 and 23.",
+            ephemeral=True
+        )
+        return
+    
+    set_sleep_schedule(
+        interaction.guild.id,
+        interaction.user.id,
+        sleep_start,
+        sleep_end
+    )
+
+    await interaction.response.send_message(
+        f"Sleep schedule saved:\n🌙 Sleep: {sleep_start}:00\n☀️ Wake: {sleep_end}:00",
         ephemeral=True
     )
 
