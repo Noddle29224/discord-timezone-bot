@@ -350,3 +350,21 @@ def set_sleep_schedule(guild_id, user_id, start_hour, end_hour):
             ))
 
         conn.commit()
+
+def clear_member_override(guild_id, user_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE timezone_members
+                SET
+                    manual_activity = NULL,
+                    manual_availability = NULL,
+                    manual_override_enabled = FALSE
+                WHERE guild_id = %s
+                AND user_id = %s
+            """, (
+                guild_id,
+                user_id
+            ))
+
+        conn.commit()

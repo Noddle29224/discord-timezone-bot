@@ -16,7 +16,8 @@ from db import (
     reset_member_details,
     set_member_override,
     set_member_auto_status,
-    set_sleep_schedule
+    set_sleep_schedule,
+    clear_member_override
 )
 
 import discord
@@ -820,6 +821,21 @@ async def timezone_my_sleep(
         f"Sleep schedule saved:\n🌙 Sleep: {sleep_start}:00\n☀️ Wake: {sleep_end}:00",
         ephemeral=True
     )
+
+@tree.command(name="timezone_clear_override", description="Clear your temporary override status.")
+async def timezone_clear_override(interaction: discord.Interaction):
+
+    clear_member_override(
+        interaction.guild.id,
+        interaction.user.id
+    )
+
+    await interaction.response.send_message(
+        "Temporary override cleared.",
+        ephemeral=True
+    )
+
+    await update_timezones()
 
 setup_database()
 client.run(TOKEN)
