@@ -771,9 +771,9 @@ async def timezone_help(interaction: discord.Interaction):
 
     await interaction.response.send_message(
         "**🌍 Timezone Bot Help**\n\n"
-        "**Member Commands:**"
+        "**Member Commands:**\n"
         "'/timezone_my_details' - Set up your profile after an admin adds you.\n"
-        "'/timezone_set_timezone' - Fix your timezone if needed.\n\n"
+        "'/timezone_set_timezone' - Fix your timezone if needed.\n"
         "'/timezone_my_avail' - Set your default activity/availability.\n"
         "'/timezone_my_sleep' - Set your normal sleep schedule.\n"
         "'/timezone_my_override' - Set a temporary status override.\n"
