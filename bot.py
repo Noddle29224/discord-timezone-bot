@@ -668,7 +668,7 @@ async def timezone_my_avail(interaction: discord.Interaction):
         )
         return
     
-    if member[8]:
+    if member[7]:
         await interaction.response.send_message(
             "Your default availability is already locked. Contact an admin if you need changes.",
             ephemeral=True
