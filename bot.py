@@ -121,7 +121,7 @@ def build_timezone_embed(guild_id):
     "sort_date": local_time.date(),
     "sort_time": local_time.time(),
     "name": f'{entry["emoji"]}   {entry["name"]}\n[{entry["label"]}]',
-    "value": f'🕒 **{time_str}** ({day_str})\n{status}\n {format_activity(entry["activity"])}\n{format_availability(entry["availability"])}\n────────\n\u200b'
+    "value": f'🕒 **{time_str}** ({day_str})\n{status}\n {format_activity(activity)}\n{format_availability(availability)}\n────────\n\u200b'
 })
         if sleep_start is not None and sleep_end is not None:
 
