@@ -138,3 +138,56 @@ def get_timezone_members(guild_id):
             rows = cur.fetchall()
 
             return rows
+
+def get_timezone_member(guild_id, user_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT
+                    user_id,
+                    display_name,
+                    age,
+                    flag,
+                    location,
+                    timezone,
+                    details_locked
+                FROM timezone_members
+                WHERE guild_id = %s
+                AND user_id = %s
+            """, (guild_id, user_id))
+
+            return cur.fetchone()
+        
+def update_member_details(
+    guild_id,
+    user_id,
+    display_name,
+    age,
+    flag,
+    location,
+    timezone
+):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE timezone_members
+                SET
+                    display_name = %s,
+                    age = %s,
+                    flag = %s,
+                    location = %s,
+                    timezone = %s,
+                    details_locked = True
+                WHERE guild_id = %s
+                AND user_id = %s
+            """, (
+                display_name,
+                age,
+                flag,
+                location,
+                timezone,
+                guild_id,
+                user_id
+            ))
+
+        conn.commit()

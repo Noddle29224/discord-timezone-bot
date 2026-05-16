@@ -9,10 +9,13 @@ from db import (
     get_server_settings,
     add_timezone_member,
     remove_timezone_member,
-    get_timezone_members
+    get_timezone_members,
+    get_timezone_member,
+    update_member_details
 )
 
 import discord
+from discord.ui import Modal, TextInput
 from discord.ext import tasks
 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
@@ -208,7 +211,7 @@ class TimezoneAddModal(discord.ui.Modal, title="Add Timezone Member"):
         self.user = user
 
     async def on_submit(self, interaction: discord.Interaction):
-        add_timezone_member(
+        update_member_details(
             interaction.guild.id,
             self.user.id,
             str(self.display_name),
@@ -238,6 +241,26 @@ async def timezone_add(
     add_timezone_member(
         interaction.guild.id,
         user.id
+    )
+
+@tree.command(name="timezone_my_details", description="Set up your timezone profile")
+async def timezone_my_details(interaction: discord.Interaction):
+
+    member = get_timezone_member(
+        interaction.guild.id,
+        interaction.user.id
+    )
+
+    if not member:
+        await interaction.response.send_message(
+            f"You are not on the timezone setup list.\n\n"
+            f"*Want to join the board? Contact an admin to be added! 😊*",
+            ephemeral=True
+        )
+        return
+    
+    await interaction.response.send_modal(
+        TimezoneAddModal(interaction.user)
     )
 
 @tree.command(name="timezone_remove", description="Remove a person from the timezone list")
