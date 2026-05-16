@@ -368,3 +368,18 @@ def clear_member_override(guild_id, user_id):
             ))
 
         conn.commit()
+
+def reset_member_availability(guild_id, user_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE timezone_members
+                SET availability_locked = FALSE
+                WHERE guild_id = %s
+                AND user_id = %s
+            """, (
+                guild_id,
+                user_id
+            ))
+
+        conn.commit()

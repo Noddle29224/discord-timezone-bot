@@ -17,7 +17,8 @@ from db import (
     set_member_override,
     set_member_auto_status,
     set_sleep_schedule,
-    clear_member_override
+    clear_member_override,
+    reset_member_availability
 )
 
 import discord
@@ -766,6 +767,35 @@ async def timezone_refresh(interaction: discord.Interaction):
         ephemeral=True
     )
 
+@tree.command(name="timezone_reset_availability", description="Reset a member's availability/sleep settings")
+@app_commands.checks.has_permissions(administrator=True)
+async def timezone_reset_availability(
+    interaction: discord.Interaction,
+    user: discord.Member
+):
+    
+    member = get_timezone_member(
+        interaction.guild.id,
+        user.id
+    )
+
+    if not member:
+        await interaction.response.send_message(
+            f"{user.mention} is not on this timezone board.",
+            ephemeral=True
+        )
+        return
+    
+    reset_member_availability(
+        interaction.guild.id,
+        user.id
+    )
+
+    await interaction.response.send_message(
+        f"{user.mention}'s availability settings have been unlocked.",
+        ephemeral=True
+    )
+
 @tree.command(name="timezone_help", description="Show timezone bot help")
 async def timezone_help(interaction: discord.Interaction):
 
@@ -782,6 +812,7 @@ async def timezone_help(interaction: discord.Interaction):
         "'/timezone_setup' Set the timezone board channel.\n"
         "'/timezone_add' - Add/approve a memmber.\n"
         "'/timezone_remove' - Remove a member.\n"
+        "'/timezone_list' - View saved timezone members.\n"
         "'/timezone_edit' - Edit a member profile.\n"
         "'/timezone_reset_details' - Let a member redo their profile/settings.\n"
         "'/timezone_refresh' - Refresh the timezone board.\n\n"
