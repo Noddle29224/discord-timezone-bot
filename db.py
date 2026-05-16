@@ -189,7 +189,9 @@ def get_timezone_members(guild_id):
                     auto_availability,
                     manual_activity,
                     manual_availability,
-                    manual_override_enabled
+                    manual_override_enabled,
+                    sleep_start,
+                    sleep_end
                 FROM timezone_members
                 WHERE guild_id = %s
                 ORDER BY location
@@ -336,7 +338,8 @@ def set_sleep_schedule(guild_id, user_id, start_hour, end_hour):
                 UPDATE timezone_members
                 SET
                     sleep_start = %s,
-                    sleep_end = %s
+                    sleep_end = %s,
+                    availability_locked = TRUE
                 WHERE guild_id = %s
                 AND user_id = %s
             """, (
