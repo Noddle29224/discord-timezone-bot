@@ -11,7 +11,8 @@ from db import (
     remove_timezone_member,
     get_timezone_members,
     get_timezone_member,
-    update_member_details
+    update_member_details,
+    update_member_timezone
 )
 
 import discord
@@ -175,34 +176,59 @@ async def timezone_setup(interaction: discord.Interaction, channel: discord.Text
         channel.id
     )
 
-class TimezoneAddModal(discord.ui.Modal, title="Add Timezone Member"):
+def country_to_flag(country):
+    countries = {
+        "australia": "🇦🇺",
+        "united states": "🇺🇸",
+        "usa": "🇺🇸",
+        "america": "🇺🇸",
+        "united kingdom": "🇬🇧",
+        "uk": "🇬🇧",
+        "england": "🇬🇧",
+        "scotland": "🇬🇧",
+        "ireland": "🇮🇪",
+        "canada": "🇨🇦",
+        "new zealand": "🇳🇿",
+        "philippines": "🇵🇭",
+        "indonesia": "🇮🇩",
+        "germany": "🇩🇪",
+        "spain": "🇪🇸",
+        "mexico": "🇲🇽",
+        "austria": "🇦🇹"
+    }
+
+    value = country.strip().lower()
+
+    return countries.get(value, country)
+
+class TimezoneAddModal(discord.ui.Modal, title="Set Up Timezone Profile"):
     display_name = discord.ui.TextInput(
         label="Display name",
-        placeholder="💙 Charlie",
+        placeholder="✨John Smith",
         required=True
     )
 
     age = discord.ui.TextInput(
         label="Age",
-        placeholder="23",
+        placeholder="00",
         required=True
     )
 
     flag = discord.ui.TextInput(
         label="Flag",
-        placeholder="🇦🇺",
+        placeholder="Country",
         required=True
     )
 
     location = discord.ui.TextInput(
         label="Location",
-        placeholder="Queensland, Australia",
+        placeholder="State, Country",
         required=True
     )
 
     timezone = discord.ui.TextInput(
         label="Timezone",
-        placeholder="Australia/Brisbane",
+        placeholder="Timezone",
         required=True
     )
 
@@ -211,14 +237,29 @@ class TimezoneAddModal(discord.ui.Modal, title="Add Timezone Member"):
         self.user = user
 
     async def on_submit(self, interaction: discord.Interaction):
+        timezone_value = str(self.timezone).strip()
+        timezone_valid = True
+
+        try:
+            ZoneInfo(timezone_value)
+        except Exception:
+            timezone_valid = False
+            await interaction.response.send_message(
+                f"'{timezone_value}' is not a valid timezone.\n\n"
+                f"Example: 'Australia/Brisbane'",
+                ephemeral=True
+            )
+            timezone_value = None
+        
         update_member_details(
             interaction.guild.id,
             self.user.id,
             str(self.display_name),
             int(str(self.age)),
-            str(self.flag),
+            country_to_flag(str(self.flag)),
             str(self.location),
-            str(self.timezone)
+            timezone_value,
+            timezone_valid
         )
 
         await interaction.response.send_message(
@@ -262,6 +303,35 @@ async def timezone_my_details(interaction: discord.Interaction):
     await interaction.response.send_modal(
         TimezoneAddModal(interaction.user)
     )
+
+@tree.command(name="timezone_set_timezone", description="Set or fix your timezone")
+async def timezone_set_timezone(
+    interaction: discord.Interaction,
+    timezone: str
+):
+    
+    try:
+        ZoneInfo(timezone)
+    except Exception:
+        await interaction.response.send_message(
+            f"'{timezone}' is not a valid timezone.\n\n"
+            f"Example: 'Australia/Brisbane'",
+            ephemeral=True
+        )
+        return
+    
+    update_member_timezone(
+        interaction.guild.id,
+        interaction.user.id,
+        timezone
+    )
+
+    await interaction.response.send_message(
+        f"Timezone updated to '{timezone}'  😄",
+        ephemeral=True
+    )
+
+    await update_timezones()
 
 @tree.command(name="timezone_remove", description="Remove a person from the timezone list")
 @app_commands.checks.has_permissions(administrator=True)

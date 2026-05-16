@@ -30,6 +30,7 @@ def setup_database():
                     flag TEXT,
                     location TEXT,
                     timezone TEXT,
+                    timezone_valid BOOLEAN DEFAULT FALSE,
                     details_locked BOOLEAN DEFAULT FALSE,
                     availability_locked BOOLEAN DEFAULT FALSE,
                     manual_override_enabled BOOLEAN DEFAULT FALSE,
@@ -41,6 +42,11 @@ def setup_database():
             cur.execute("""
                 ALTER TABLE timezone_members
                 ADD COLUMN IF NOT EXISTS details_locked BOOLEAN DEFAULT FALSE
+            """)
+
+            cur.execute("""
+                ALTER TABLE timezone_members
+                ADD COLUMN IF NOT EXISTS timezone_valid BOOLEAN DEFAULT FALSE
             """)
 
         conn.commit()
@@ -170,7 +176,8 @@ def update_member_details(
     age,
     flag,
     location,
-    timezone
+    timezone,
+    timezone_valid
 ):
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -182,6 +189,7 @@ def update_member_details(
                     flag = %s,
                     location = %s,
                     timezone = %s,
+                    timezone_valid = %s,
                     details_locked = True
                 WHERE guild_id = %s
                 AND user_id = %s
@@ -191,8 +199,28 @@ def update_member_details(
                 flag,
                 location,
                 timezone,
+                timezone_valid,
                 guild_id,
                 user_id
             ))
 
         conn.commit()
+
+def update_member_timezone(guild_id, user_id, timezone):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE timezone_members
+                SET
+                    timezone = %s,
+                    timezone_valid = TRUE
+                WHERE guild_id = %s
+                AND user_id = %s
+            """, (
+                timezone,
+                guild_id,
+                user_id
+            ))
+
+        conn.commit()
+            
