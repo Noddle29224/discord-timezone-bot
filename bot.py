@@ -417,7 +417,7 @@ class ActivitySelect(discord.ui.Select):
             discord.SelectOption(label="Watching", emoji="🎥"),
             discord.SelectOption(label="Working", emoji="💼"),
             discord.SelectOption(label="Studying", emoji="📚"),
-            discord.SelectOption(label="Relaxing", emoji="🌙")
+            discord.SelectOption(label="Relaxing", emoji="😎")
         ]
 
         super().__init__(
