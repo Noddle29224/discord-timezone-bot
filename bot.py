@@ -68,9 +68,13 @@ def build_timezone_embed(guild_id):
         activity = row[6] or "Around"
         availability = row[7] or "Available"
 
-        if row [10]:
-            activity = row[8] or activity
-            availability = row[7] or availability
+        manual_activity = row[8]
+        manual_availability = row[9]
+        manual_override_enabled = row[10]
+
+        if manual_override_enabled:
+            activity = manual_activity or activity
+            availability = manual_availability or availability
 
         timezones.append({
             "name": row[1],
@@ -406,6 +410,8 @@ class OverrideView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=300)
 
+        self.clear_items()
+
         self.selected_activity = "Around"
         self.selected_availability = "Available"
 
@@ -588,7 +594,7 @@ async def timezone_my_override(interaction: discord.Interaction):
         view=OverrideView(),
         ephemeral=True
     )
-    
+
 
 @tree.command(name="timezone_remove", description="Remove a person from the timezone list")
 @app_commands.checks.has_permissions(administrator=True)
