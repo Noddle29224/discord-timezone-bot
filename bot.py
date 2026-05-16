@@ -229,7 +229,7 @@ async def timezone_add(
     interaction: discord.Interaction,
     user: discord.Member
 ):
-    await interaction.response.send_modal(
+    await interaction.response.send_message(
         f"{user.mention} has been added to the Timezone board setup list.\n\n"
         f"Use '/timezone_my_details' to set up your progile.\n\n\n"
         f"Want to join the board? Conact an admin to be added! 😊",
