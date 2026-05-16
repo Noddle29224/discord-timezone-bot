@@ -38,6 +38,11 @@ def setup_database():
                 )
             """)
 
+            cur.execute("""
+                ALTER TABLE timezone_members
+                ADD COLUMN IF NOT EXISTS details_locked BOOLEAN DEFAULT FALSE
+            """)
+
         conn.commit()
 
     print("Database setup complete.")

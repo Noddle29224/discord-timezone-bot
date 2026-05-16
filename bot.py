@@ -235,7 +235,7 @@ async def timezone_add(
     await interaction.response.send_message(
         f"{user.mention} has been added to the Timezone board setup list.\n"
         f"Use '/timezone_my_details' to set up your profile.\n\n"
-        f"*Want to join the board? Conact an admin to be added! 😊*"
+        f"*Want to join the board?   Conact an admin to be added!  😊*"
     )
 
     add_timezone_member(
@@ -254,7 +254,7 @@ async def timezone_my_details(interaction: discord.Interaction):
     if not member:
         await interaction.response.send_message(
             f"You are not on the timezone setup list.\n\n"
-            f"*Want to join the board? Contact an admin to be added! 😊*",
+            f"*Want to join the board?   Contact an admin to be added!  😊*",
             ephemeral=True
         )
         return
