@@ -12,7 +12,8 @@ from db import (
     get_timezone_members,
     get_timezone_member,
     update_member_details,
-    update_member_timezone
+    update_member_timezone,
+    reset_member_details
 )
 
 import discord
@@ -282,9 +283,49 @@ async def timezone_add(
         f"*Want to join the board?   Conact an admin to be added!   😊*"
     )
 
+    existing_member = get_timezone_member(
+        interaction.guild.id,
+        user.id
+    )
+
+    if existing_member:
+        await interaction.response.send_message(
+            f"{user.mention} is already on this timezone board.",
+            ephemeral=True
+        )
+        return
+
     add_timezone_member(
         interaction.guild.id,
         user.id
+    )
+
+@tree.command(name="timezone_reset_details", description="Reset a member's timezone profile lock")
+@app_commands.checks.has_permissions(administrator=True)
+async def timezone_reset_details(
+    interaction: discord.Interaction,
+    user: discord.Member
+):
+    member = get_timezone_member(
+        interaction.guild.id,
+        user.id
+    )
+
+    if not member:
+        await interaction.response.send_message(
+            f"{user.mention} is not on this timezone board.",
+            ephemeral=True
+        )
+        return
+    
+    reset_member_details(
+        interaction.guild.id,
+        user.id
+    )
+
+    await interaction.response.send_message(
+        f"{user.mention}'s timezone profile has been unlocked!",
+        ephemeral=True
     )
 
 @tree.command(name="timezone_my_details", description="Set up your timezone profile")

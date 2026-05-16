@@ -223,4 +223,18 @@ def update_member_timezone(guild_id, user_id, timezone):
             ))
 
         conn.commit()
-            
+
+def reset_member_details(guild_id, user_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE timezone_members
+                SET details_locked = FALSE
+                WHERE guild_id = %s
+                AND user_id = %s
+            """, (
+                guild_id,
+                user_id
+            ))
+
+        conn.commit()
