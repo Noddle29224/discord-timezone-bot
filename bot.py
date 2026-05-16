@@ -271,6 +271,78 @@ class TimezoneAddModal(discord.ui.Modal, title="Set Up Timezone Profile"):
             ephemeral=True
         )
 
+class TimezoneEditModal(Modal, title="Edit Timezone Profile"):
+
+    def __init__(self, user, member_data):
+        super().__init__()
+        self.user = user
+        self.member_data = member_data
+
+        self.display_name.default = member_data[1] or ""
+        self.age.default = str(member_data[2] or "")
+        self.flag.default = member_data[3] or ""
+        self.location.default = member_data[4] or ""
+        self.timezone.default = member_data[5] or ""
+
+    display_name = TextInput(
+        label="Display Name",
+        max_length=32,
+        required=True
+    )
+
+    age = TextInput(
+        label="Age",
+        max_length=3,
+        required=True
+    )
+
+    flag = TextInput(
+        label="Flag / Country",
+        max_length=50,
+        required=True
+    )
+
+    location = TextInput(
+        label="Location",
+        max_length=100,
+        required=True
+    )
+
+    timezone = TextInput(
+        label="Timezone",
+        max_length=100,
+        required=True
+    )
+
+    async def on_submit(self, interaction: discord.Interaction):
+
+        timezone_value = str(self.timezone).strip()
+        timezone_valid = True
+
+        try:
+            ZoneInfo(timezone_value)
+        except Exception:
+            timezone_valid = False
+            timezone_value = None
+
+        update_member_details(
+            interaction.guild.id,
+            self.user.id,
+            str(self.display_name),
+            int(str(self.age)),
+            country_to_flag(str(self.flag)),
+            str(self.location),
+            timezone_value,
+            timezone_valid
+        )
+
+        await interaction.response.send_message(
+            f"{self.user.mention}'s profile was updated!   😄",
+            ephemeral=True
+        )
+
+        await update_timezones()
+
 @tree.command(name="timezone_add", description="Approve a member for the timezone board")
 @app_commands.checks.has_permissions(administrator=True)
 async def timezone_add(
@@ -326,6 +398,28 @@ async def timezone_reset_details(
     await interaction.response.send_message(
         f"{user.mention}'s timezone profile has been unlocked!",
         ephemeral=True
+    )
+
+@tree.command(name="timezone_edit", description="Edit a member's timezone profile")
+@app_commands.checks.has_permissions(administrator=True)
+async def timezone_edit(
+    interaction: discord.Interaction,
+    user: discord.Member
+):
+    member = get_timezone_member(
+        interaction.guild.id,
+        user.id
+    )
+
+    if not member:
+        await interaction.response.send_message(
+            f"{user.mention} is not on this timezone board.",
+            ephemeral=True
+        )
+        return
+    
+    await interaction.response.send_modal(
+        TimezoneEditModal(user, member)
     )
 
 @tree.command(name="timezone_my_details", description="Set up your timezone profile")
