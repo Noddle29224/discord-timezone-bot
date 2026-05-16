@@ -72,7 +72,8 @@ def format_activity(value):
         "Watching": "🎥",
         "Working": "💼",
         "Studying": "📚",
-        "Relaxing": "🌙"
+        "Relaxing": "😎",
+        "Sleeping": "🌙"
     }
 
     return f"{emojis.get(value, '💬')} {value}"
@@ -97,10 +98,6 @@ def build_timezone_embed(guild_id):
 
         sleep_start = row[11]
         sleep_end = row[12]
-
-        if manual_override_enabled:
-            activity = manual_activity or activity
-            availability = manual_availability or availability
 
         timezones.append({
             "name": row[1],
@@ -142,6 +139,10 @@ def build_timezone_embed(guild_id):
             if is_sleeping:
                 activity = "Sleeping"
                 availability = "Do Not Disturb"
+        
+        if manual_override_enabled:
+            activity = manual_activity or activity
+            availability = manual_availability or availability
 
     entries.sort(key=lambda x: (x["sort_date"], x["sort_time"], x["name"]))
 
