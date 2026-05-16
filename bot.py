@@ -62,7 +62,7 @@ def build_timezone_embed(guild_id):
     for  row in timezone_rows:
         if not row[5]:
             continue
-        
+
         timezones.append({
             "name": row[1],
             "emoji": row[3],
@@ -81,7 +81,7 @@ def build_timezone_embed(guild_id):
         entries.append({
     "sort_date": local_time.date(),
     "sort_time": local_time.time(),
-    "name": f'{entry["emoji"]} {entry["name"]}\n[{entry["label"]}]',
+    "name": f'{entry["emoji"]}   {entry["name"]}\n[{entry["label"]}]',
     "value": f'🕒 **{time_str}** ({day_str})\n{status}\n────────\n\u200b'
 })
 
@@ -299,6 +299,13 @@ async def timezone_my_details(interaction: discord.Interaction):
         await interaction.response.send_message(
             f"You are not on the timezone setup list.\n\n"
             f"*Want to join the board?   Contact an admin to be added!   😊*",
+            ephemeral=True
+        )
+        return
+    
+    if member[6]:
+        await interaction.response.send_message(
+            "your timezone profile is already locked. Contact an admin if you need changes.",
             ephemeral=True
         )
         return
