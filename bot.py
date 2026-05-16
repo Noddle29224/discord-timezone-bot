@@ -53,6 +53,27 @@ def get_status(local_time):
     else:
         return "🌃 Late"
 
+def format_availability(value):
+    emojis = {
+        "Available": "🟢",
+        "Slow Replies": "🐢",
+        "Do Not Disturb": "⛔",
+        "Away": "🚗"
+    }
+
+    return f"{emojis.get(value, '🟢')} {value}"
+
+def format_activity(value):
+    emojis = {
+        "Around": "💬",
+        "Gaming": "🎮",
+        "Watching": "🎥",
+        "Working": "💼",
+        "Studying": "📚",
+        "Relaxing": "🌙"
+    }
+
+    return f"{emojis.get(value, '💬')} {value}"
 
 def build_timezone_embed(guild_id):
     now_utc = datetime.now(ZoneInfo("UTC"))
@@ -97,7 +118,7 @@ def build_timezone_embed(guild_id):
     "sort_date": local_time.date(),
     "sort_time": local_time.time(),
     "name": f'{entry["emoji"]}   {entry["name"]}\n[{entry["label"]}]',
-    "value": f'🕒 **{time_str}** ({day_str})\n{status}\n🟢 {entry["activity"]}    •    {entry["availability"]}\n────────\n\u200b'
+    "value": f'🕒 **{time_str}** ({day_str})\n{status}\n {format_activity(entry["activity"])}    •    {format_availability(entry["availability"])}\n────────\n\u200b'
 })
 
     entries.sort(key=lambda x: (x["sort_date"], x["sort_time"], x["name"]))
@@ -374,7 +395,8 @@ class ActivitySelect(discord.ui.Select):
             placeholder="Choose your activity status...",
             min_values=1,
             max_values=1,
-            options=options
+            options=options,
+            row=0
         )
 
     async def callback(self, interaction: discord.Interaction):
@@ -397,7 +419,8 @@ class AvailabilitySelect(discord.ui.Select):
             placeholder="Choose your availability status...",
             min_values=1,
             max_values=1,
-            options=options
+            options=options,
+            row=1
         )
 
     async def callback(self, interaction: discord.Interaction):
@@ -410,15 +433,13 @@ class OverrideView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=300)
 
-        self.clear_items()
-
         self.selected_activity = "Around"
         self.selected_availability = "Available"
 
         self.add_item(ActivitySelect())
         self.add_item(AvailabilitySelect())
     
-    @discord.ui.button(label="Apply Override", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Apply Override", style=discord.ButtonStyle.green, row=2)
     async def apply_override(
         self,
         interaction: discord.Interaction,
