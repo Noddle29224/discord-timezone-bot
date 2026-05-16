@@ -115,7 +115,7 @@ def build_timezone_embed(guild_id):
         local_time = now_utc.astimezone(ZoneInfo(entry["tz"]))
         time_str = local_time.strftime("%I:%M %p").lstrip("0")
         day_str = local_time.strftime("%a")
-        status = get_status(local_time)
+        status = ""
 
         activity = entry["activity"]
         availability = entry["availability"]
@@ -142,7 +142,7 @@ def build_timezone_embed(guild_id):
     "sort_date": local_time.date(),
     "sort_time": local_time.time(),
     "name": f'{entry["emoji"]}   {entry["name"]}\n[{entry["label"]}]',
-    "value": f'🕒 **{time_str}** ({day_str})\n{status}\n {format_activity(activity)}\n{format_availability(availability)}\n────────\n\u200b'
+    "value": f'🕒 **{time_str}** ({day_str})\n {format_activity(activity)}\n{format_availability(availability)}\n────────\n\u200b'
 })
         
         if manual_override_enabled:
