@@ -61,6 +61,21 @@ def setup_database():
                 ADD COLUMN IF NOT EXISTS auto_availability TEXT DEFAULT 'Available'
             """)
 
+            cur.execute("""
+                ALTER TABLE timezone_members
+                ADD COLUMN IF NOT EXISTS manual_activity TEXT
+            """)
+
+            cur.execute("""
+                ALTER TABLE timezone_members
+                ADD COLUMN IF NOT EXISTS manual_availability TEXT
+            """)
+
+            cur.execute("""
+                ALTER TABLE timezone_members
+                ADD COLUMN IF NOT EXISTS manual_override_enabled BOOLEAN DEFAULT FALSE
+            """)
+
         conn.commit()
 
     print("Database setup complete.")
