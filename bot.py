@@ -93,7 +93,7 @@ def build_timezone_embed(guild_id):
     "sort_time": local_time.time(),
     "name": f'{entry["emoji"]}   {entry["name"]}\n[{entry["label"]}]',
     "value": f'🕒 **{time_str}** ({day_str})\n{status}\n🟢 {entry['activity']} • {entry['availability']}\n────────\n\u200b'
-    })
+})
 
     entries.sort(key=lambda x: (x["sort_date"], x["sort_time"], x["name"]))
 
