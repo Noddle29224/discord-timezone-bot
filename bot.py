@@ -90,7 +90,7 @@ def build_timezone_embed(guild_id):
 
     embed = discord.Embed(
     title="🌍 Current Times",
-    description="Updated automatically every 30 minutes",
+    description="Times updated automatically",
     color=0x5865F2  # Discord blurple
 )
 
@@ -532,6 +532,29 @@ async def timezone_refresh(interaction: discord.Interaction):
 
     await interaction.followup.send(
         "Timezone board refreshed.",
+        ephemeral=True
+    )
+
+@tree.command(name="timezone_help", description="Show timezone bot help")
+async def timezone_help(interaction: discord.Interaction):
+
+    await interaction.response.send_message(
+        "**Timezone Bot Help**\n\n"
+        "**Members:**"
+        "'/timezone_my_details' - Set up your profile after an admin adds you.\n"
+        "'/timezone_set_timezone' - Fix your timezone if needed.\n\n"
+        "**Admins:**\n"
+        "'/timezone_add' - Add/approve a memmber.\n"
+        "'/timezone_remove' - Remove a member.\n"
+        "'/timezone_edit' - Edit a member profile.\n"
+        "'/timezone_reset_details' - Let a member redo their profile.\n"
+        "'/timezone_refresh' - Refresh the timezone board.\n\n"
+        "**Timezone Examples:**\n"
+        "'Australia/Brisbane'\n"
+        "'America/New_York'\n"
+        "'Europe/London'\n"
+        "'Asia/Manila'\n\n"
+        "**Tip:** You can type a country name like 'Australia' instead of a flag emoji.",
         ephemeral=True
     )
 
